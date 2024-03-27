@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class Util {
 
     // Создание переменных с url,логином и паролем к БД
-    private static final String url = "jdbc:mysql://localhost/testdata";
-    private static final String user = "root";
+    private static final String URL = "jdbc:mysql://localhost/testdata";
+    private static final String USER = "root";
     private static final String password = "007707";
 
     // Создание функции для подключения к БД
@@ -18,12 +18,12 @@ public class Util {
 
         try {
 
-            connect = DriverManager.getConnection(url,user,password);
+            connect = DriverManager.getConnection(URL, USER,password);
             System.out.println("\nПодключение БД: Успешно!");
 
         } catch (SQLException e) {
 
-            throw new RuntimeException(e + "\nПодключение БД: Неудача...");
+            throw new RuntimeException(e + "Подключение БД: Неудача...");
 
         }
 

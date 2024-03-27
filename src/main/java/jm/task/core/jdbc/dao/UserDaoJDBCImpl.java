@@ -9,12 +9,17 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class UserDaoJDBCImpl implements UserDao {
+
+    // Создание переменной подключения
     private Connection conenct = Util.getConnection();
 
     public UserDaoJDBCImpl() {}
 
+    // Создание таблицы если не создана
+    @Override
     public void createUsersTable() {
 
+        // Формирование запроса
         String sql = "CREATE TABLE IF NOT EXISTS USER" +
                 "(ID INT AUTO_INCREMENT PRIMARY KEY, " +
                 "NAME VARCHAR(50) NOT NULL, " +
@@ -34,7 +39,10 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    // Удаление таблицы
+    @Override
     public void dropUsersTable() {
+
         try (Statement statement = conenct.createStatement()){
 
             statement.execute("DROP TABLE IF EXISTS USER");
@@ -47,15 +55,16 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
+    // Добавление пользователя
+    @Override
+    public void saveUser(String name, String lastName, byte age) {
 
         // Формирование запроса
         String sql = "INSERT INTO USER (NAME, LASTNAME,AGE) VALUES (?,?,?)";
 
         // Обработка запроса
-        try {
+        try ( PreparedStatement statement = conenct.prepareStatement(sql) ) {
 
-            PreparedStatement statement = conenct.prepareStatement(sql);
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
@@ -72,21 +81,22 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    // Получение пользователя по ID
+    @Override
     public void removeUserById(long id) {
 
         // Формирование запроса
         String sql = "SELECT * FROM USER WHERE ID = ?";
 
-        try {
+        try ( PreparedStatement statement = conenct.prepareStatement(sql) ) {
 
-            PreparedStatement statement = conenct.prepareStatement(sql);
             statement.setLong(1, id);
 
             // Получение данных по запросу
             ResultSet result = statement.executeQuery();
 
             // Обработка отображения запроса
-            if(result.next()) {
+            if ( result.next() ) {
 
                 User user = new User();
                 user.setId(result.getLong("id"));
@@ -112,6 +122,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
+    // Получение списка юзеров
+    @Override
     public List<User> getAllUsers() {
 
         // Создание листа для хранения юзеров
@@ -120,10 +132,7 @@ public class UserDaoJDBCImpl implements UserDao {
         // Формирование запроса
         String sql = "SELECT * FROM USER";
 
-        try {
-
-            // Обработка запрсоа
-            PreparedStatement statement = conenct.prepareStatement(sql);
+        try ( PreparedStatement statement = conenct.prepareStatement(sql) ) {
 
             // Получение данных по запросу
             ResultSet result = statement.executeQuery();
@@ -131,12 +140,13 @@ public class UserDaoJDBCImpl implements UserDao {
             while (result.next()) {
 
                 // Обработка полученных данных
-                String name = result.getString("name");
-                String lastname = result.getString("lastname");
-                byte age = result.getByte("age");
+                User user = new User();
 
-                // Добавление в список
-                User user = new User(name, lastname, age);
+                user.setId(result.getLong("id"));
+                user.setName(result.getString("name"));
+                user.setLastName(result.getString("lastname"));
+                user.setAge(result.getByte("age"));
+
                 users.add(user);
             }
 
@@ -149,9 +159,26 @@ public class UserDaoJDBCImpl implements UserDao {
         }
 
         return users;
+
     }
 
+    // Отчистка таблицы
+    @Override
     public void cleanUsersTable() {
 
+        // Формирование запроса
+        String sql = "DELETE FROM USER";
+
+        try ( Statement statement = conenct.createStatement() ) {
+
+            // Отправка запроса
+            statement.execute(sql);
+            System.out.println("Отчистка таблицы: Успех!");
+
+        } catch ( SQLException e ) {
+
+            throw new RuntimeException(e + "Отчистка таблицы: Неудача...");
+
+        }
     }
 }

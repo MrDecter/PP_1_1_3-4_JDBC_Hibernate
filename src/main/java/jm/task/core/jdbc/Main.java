@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
         // Создание переменной для доступа
-        UserDao userDao = new UserDaoJDBCImpl();
+       UserDao userDao = new UserDaoJDBCImpl();
 
         // Создание теблицы
         userDao.createUsersTable();
@@ -26,7 +26,7 @@ public class Main {
 
         userDao.removeUserById(2); // Возврат по ID
 
-        userDao.getAllUsers(); // Возврат всех юзеров
+        System.out.println(userDao.getAllUsers()); // Возврат всех юзеров
 
         for (User user:userDao.getAllUsers()) {
 
