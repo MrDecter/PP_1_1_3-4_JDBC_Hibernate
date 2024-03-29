@@ -1,41 +1,38 @@
 package jm.task.core.jdbc;
 
 import jm.task.core.jdbc.dao.UserDao;
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
 
-        // Создание переменной для доступа
-       UserDao userDao = new UserDaoJDBCImpl();
+        UserDao userDao = new UserDaoHibernateImpl();
 
-        // Создание теблицы
         userDao.createUsersTable();
 
-        // Добавление данных в БД
-        userDao.saveUser("Name1","LastName1", (byte)20);
-        userDao.saveUser("Name2","LastName2", (byte)30);
-        userDao.saveUser("Name3","LastName3", (byte)10);
-        userDao.saveUser("Name4","LastName4", (byte)50);
-        userDao.saveUser("Name5","LastName5", (byte)60);
+        userDao.saveUser("name1","lastname1", (byte) 20);
+        userDao.saveUser("name2","lastname2", (byte) 30);
+        userDao.saveUser("name3","lastname3", (byte) 40);
+        userDao.saveUser("name4","lastname4", (byte) 50);
 
-        userDao.removeUserById(2); // Возврат по ID
+        List<User> users = userDao.getAllUsers();
+        users.forEach(s -> System.out.println(s.getId() + " " + s.getName() + " " + s.getLastName() + " " + s.getAge()));
 
-        System.out.println(userDao.getAllUsers()); // Возврат всех юзеров
+        userDao.removeUserById(2);
 
-        for (User user:userDao.getAllUsers()) {
+        userDao.cleanUsersTable();
 
-            System.out.println(user.getName() + " " + user.getLastName() + " - " + user.getAge() + " лет");
+        List<User> users2 = userDao.getAllUsers();
+        users2.forEach(s -> System.out.println(s.getId() + " " + s.getName() + " " + s.getLastName() + " " + s.getAge()));
 
-        }
+        userDao.dropUsersTable();
 
-        userDao.cleanUsersTable(); // Удаление всех юзеров
-
-        userDao.dropUsersTable(); // Удаление таблицы
     }
 }
