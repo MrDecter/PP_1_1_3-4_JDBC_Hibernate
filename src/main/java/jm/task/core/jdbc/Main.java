@@ -12,27 +12,25 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-
+        // Получение объекта
         UserDao userDao = new UserDaoHibernateImpl();
-
+        // Создание таблицы
         userDao.createUsersTable();
-
+        // Добавление пользователей
         userDao.saveUser("name1","lastname1", (byte) 20);
         userDao.saveUser("name2","lastname2", (byte) 30);
         userDao.saveUser("name3","lastname3", (byte) 40);
         userDao.saveUser("name4","lastname4", (byte) 50);
-
+        // Проверка добовления и работоспособности функции
         List<User> users = userDao.getAllUsers();
         users.forEach(s -> System.out.println(s.getId() + " " + s.getName() + " " + s.getLastName() + " " + s.getAge()));
-
+        // Проверка функции получения по id
         userDao.removeUserById(2);
-
+        // Проверка функции отчистки
         userDao.cleanUsersTable();
-
         List<User> users2 = userDao.getAllUsers();
         users2.forEach(s -> System.out.println(s.getId() + " " + s.getName() + " " + s.getLastName() + " " + s.getAge()));
-
+        // Удаление таблицы
         userDao.dropUsersTable();
-
     }
 }

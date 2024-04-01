@@ -5,11 +5,12 @@ import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 
+import java.sql.SQLException;
 import java.util.List;
 
 // Обновление общекта на использование Hibernate
 public class UserServiceImpl implements UserService {
-    private UserDaoHibernateImpl userFunc = new UserDaoHibernateImpl();
+    private UserDao userFunc = new UserDaoHibernateImpl();
     public void createUsersTable()  {
         userFunc.createUsersTable();
     }
@@ -18,7 +19,7 @@ public class UserServiceImpl implements UserService {
         userFunc.dropUsersTable();
     }
 
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         userFunc.saveUser(name,lastName,age);
     }
 
