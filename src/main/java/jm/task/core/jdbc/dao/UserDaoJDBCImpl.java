@@ -12,71 +12,50 @@ public class UserDaoJDBCImpl implements UserDao {
 
     // Создание переменной подключения
     private Connection conenct = Util.getConnection();
-
-    public UserDaoJDBCImpl() {}
-
+    public UserDaoJDBCImpl() throws SQLException {}
     // Создание таблицы если не создана
     @Override
     public void createUsersTable() {
-
         // Формирование запроса
         String sql = "CREATE TABLE IF NOT EXISTS USER" +
                 "(ID INT AUTO_INCREMENT PRIMARY KEY, " +
                 "NAME VARCHAR(50) NOT NULL, " +
                 "LASTNAME VARCHAR(100) NOT NULL, " +
                 "AGE INT NOT NULL)";
-
         try (Statement statement = conenct.createStatement()){
-
             statement.executeUpdate(sql);
-
             System.out.println("Таблица в БД: Создана!");
-
         } catch (SQLException e) {
-
             throw new RuntimeException(e + "Таблица в БД: Неудалось инициализировать...");
-
         }
     }
 
     // Удаление таблицы
     @Override
-    public void dropUsersTable() {
-
+    public void dropUsersTable() throws SQLException {
         try (Statement statement = conenct.createStatement()){
-
             statement.execute("DROP TABLE IF EXISTS USER");
             System.out.println("Удаление таблицы: Успех!");
-
         } catch (SQLException e) {
-
-            throw new RuntimeException(e + "Удаление таблицы: Неудача...");
-
+            throw new SQLException(e + "Удаление таблицы: Неудача...");
         }
     }
 
     // Добавление пользователя
     @Override
-    public void saveUser(String name, String lastName, byte age) {
-
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         // Формирование запроса
         String sql = "INSERT INTO USER (NAME, LASTNAME,AGE) VALUES (?,?,?)";
-
         // Обработка запроса
         try ( PreparedStatement statement = conenct.prepareStatement(sql) ) {
-
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
-
             // Отправка запроса
             statement.executeUpdate();
-
             System.out.println("Добавление данных: Успех!");
-
         } catch (SQLException e) {
-
-            throw new RuntimeException(e + "Добавление данных: Неудача...");
+            throw new SQLException(e + "Добавление данных: Неудача...");
 
         }
     }
